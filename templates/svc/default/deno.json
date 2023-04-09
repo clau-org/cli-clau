@@ -1,0 +1,13 @@
+{
+  "name": "svc-<NAME>",
+  "version": "0.0.0",
+  "tasks": {
+    "dev": "deno run -A --watch src/main.ts",
+    "test": "deno test -A",
+    "test:dev": "deno test -A --watch",
+    "preview": "deno run -A src/main.ts",
+    "deploy:test": "deployctl deploy --project='kind-butterfly-54' --prod --exclude='node_modules' src/main.ts ",
+    "deploy:stage": "deployctl deploy --project='stage-svc-<NAME>' --prod --exclude='node_modules' src/main.ts ",
+    "deploy:prod": "deployctl deploy --project='prod-api-<NAME>' --prod --exclude='node_modules' src/main.ts "
+  }
+}
