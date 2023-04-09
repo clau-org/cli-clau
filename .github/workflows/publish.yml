@@ -32,7 +32,7 @@ jobs:
   publish:
     name: Publish release
     runs-on: ubuntu-latest
-    if: "contains(github.event.head_commit.message, '[release patch]') || contains(github.event.head_commit.message, '[release minor]') || contains(github.event.head_commit.message, '[release major]') || github.event_name == 'workflow_dispatch'"
+    if: "contains(github.event.head_commit.message, '[patch]') || contains(github.event.head_commit.message, '[minor]') || contains(github.event.head_commit.message, '[major]') || github.event_name == 'workflow_dispatch'"
 
     steps:
       - name: Checkout code 📁
@@ -50,7 +50,7 @@ jobs:
         id: extract_version
         if: "github.event_name == 'push'"
         run: |
-          VERSION=$(echo "${{ github.event.head_commit.message }}" | grep -oP '\[release \K(patch|minor|major)')
+          VERSION=$(echo "${{ github.event.head_commit.message }}" | grep -oP '\[\K(patch|minor|major)')
           echo "::set-output name=version::$VERSION"
 
       - name: Set version for workflow_dispatch
