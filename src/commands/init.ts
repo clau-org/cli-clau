@@ -32,7 +32,7 @@ export default defineCommand({
     const { logger, program } = ctx;
     const {
       name = "svc",
-      dirpath = "",
+      dirpath =  Deno.cwd(),
       template,
     } = program;
 
