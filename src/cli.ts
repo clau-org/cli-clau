@@ -1,23 +1,4 @@
-import { Cli, CliCommand, ActionContext } from "./deps.ts";
+import { defineCommandLineInterface } from "../deps.ts";
+import commandInit from "./commands/init.ts";
 
-const clau = new Cli({
-  name: "CLAU",
-});
-
-const commandInit = new CliCommand("init");
-
-commandInit.addFlag({
-  key: "-s --some",
-  description: "some description",
-  required: true,
-});
-
-commandInit.setAction((ctx: ActionContext) => {
-  const { logger, program } = ctx;
-
-  logger.info("action", program.some);
-});
-
-clau.addCommand(commandInit);
-
-export { clau };
+export default await defineCommandLineInterface({ commands: [commandInit] });

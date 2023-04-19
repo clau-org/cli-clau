@@ -1,3 +1,3 @@
-import { clau } from "./cli.ts";
+import cli from "./cli.ts";
 
-clau.run();
+cli.run();
