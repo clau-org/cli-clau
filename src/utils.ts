@@ -1,18 +1,5 @@
 import { walk } from "https://deno.land/std@0.184.0/fs/mod.ts";
 
-export function validateOption(option: string, options: string[]) {
-  const isValidOption = options.includes(option);
-  if (isValidOption) return;
-
-  const message = `
-  
-    Invalid option: ${option}
-    Options: ${options}
-    `;
-
-  throw new Error(message);
-}
-
 export type ReplaceByInDirParams = {
   dir: string;
   search: string;
@@ -57,7 +44,6 @@ export async function replaceByInDir({
     }
   }
 }
-
 export type ReplaceNamesInDirParams = {
   dir: string;
   search: string;
