@@ -1,68 +1,41 @@
 import {
-  $,
+  Action,
   CliContext,
   defineCommand,
   defineFlag,
   validateOption,
 } from "../../deps.ts";
-import { replaceByInDir, replaceNamesInDir } from "../utils.ts";
+import { initNewProject } from "../modules/init.ts";
 
-const name = defineFlag({
+export const key = "init";
+export const description = "Command for init a new project";
+
+export const flagName = defineFlag({
   key: "-n --name",
   required: true,
   description: "Name of project",
 });
 
-const dirpath = defineFlag({
+export const flagDirpath = defineFlag({
   key: "-d --dirpath",
   description: "Directory path where to create the project, default is '.'",
 });
 
-const template = defineFlag({
+export const flagTemplate = defineFlag({
   key: "-t --template",
   required: true,
   description: "Template to use to init the project",
 });
 
-const templates = ["svc-crud", "svc-hello", "cli"];
+export const flags = [flagName, flagDirpath, flagTemplate];
 
-export default defineCommand({
-  key: "init",
-  description: "Command for init a new project",
-  flags: [name, dirpath, template],
-  action: async (ctx: CliContext) => {
-    const { logger, program } = ctx;
-    const {
-      name = "svc",
-      dirpath = Deno.cwd(),
-      template,
-    } = program;
+export const action: Action = async (ctx: CliContext) => {
+  const { program: { name, dirpath, template } } = ctx;
+  const templates = ["svc-crud", "svc-hello", "cli"];
 
-    // Validate options
-    validateOption(template, templates);
+  validateOption(template, templates);
 
-    // Get working dirs
-    const tempDirPath = await Deno.makeTempDir();
-    const cliDir = `${tempDirPath}/.cli-clau`;
-    const templateDir = `${cliDir}/.playground/${template}`;
-    await Deno.mkdir(cliDir, { recursive: true });
+  await initNewProject({ ctx, dirpath, name, template });
+};
 
-    // Clone repository template
-    await $`git clone git@github.com:clau-org/mod-core.git ${cliDir}`;
-
-    // Replace name
-    const search = "user";
-    const replacement = name;
-    const dir = templateDir;
-    await replaceByInDir({ dir, search, replacement });
-    await replaceNamesInDir({ dir, search, replacement });
-
-    // Move to dirpath
-    await Deno.rename(templateDir, `${dirpath}`);
-
-    // Remove tempDirPath
-    await Deno.remove(`${tempDirPath}`, { recursive: true });
-
-    logger.info("init action", { name, dirpath, template });
-  },
-});
+export default defineCommand({ key, description, flags, action });
