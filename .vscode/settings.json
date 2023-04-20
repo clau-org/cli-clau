@@ -3,5 +3,6 @@
   "deno.lint": false,
   "deno.unstable": true,
   "editor.formatOnSave": true,
-  "deno.suggest.completeFunctionCalls": true
+  "deno.suggest.completeFunctionCalls": true,
+  "editor.guides.bracketPairs": true
 }

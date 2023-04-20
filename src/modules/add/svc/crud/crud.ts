@@ -2,6 +2,7 @@ import { CliContext } from "https://raw.githubusercontent.com/clau-org/mod-core/
 import $ from "https://deno.land/x/dax@0.30.1/mod.ts";
 import { replaceInFiles } from "../../../utils.ts";
 import { generateValidations } from "./validations.ts";
+import { join } from "https://deno.land/std@0.116.0/path/mod.ts";
 
 export type addRouterCrudOptions = {
   config: any;
@@ -19,33 +20,40 @@ export default async function (options: addRouterCrudOptions) {
     ctx: { logger },
   } = options;
 
-  // Get working dirs
+  // Get tmp dir
   const dirPathTemp = await Deno.makeTempDir();
-  const dirPathCli = `${dirPathTemp}/.cli-clau`;
-  const dirPathTemplate = `${dirPathCli}/.playground/${template}`;
 
-  // Download template
-  await Deno.mkdir(dirPathCli, { recursive: true });
-  await $`git clone git@github.com:clau-org/mod-core.git ${dirPathCli}`;
+  try {
+    const dirPathCli = join(dirPathTemp, ".cli-clau");
+    const dirPathTemplate = join(dirPathCli, ".playground", template);
 
-  // Get specific files to update
-  const filePathApiCreate = `${dirPathTemplate}/src/api/users/create.ts`;
+    // Download template
+    await Deno.mkdir(dirPathCli, { recursive: true });
+    await $`git clone git@github.com:clau-org/mod-core.git ${dirPathCli}`;
 
-  // Generate validation code
-  await generateValidations({ path: filePathApiCreate, props });
+    // Generate validation code
+    const filePathApiCreate = join(
+      dirPathTemplate,
+      "src",
+      "api",
+      "users",
+      "create.ts",
+    );
+    await generateValidations({ path: filePathApiCreate, props });
 
-  // Replace name in files (content and name/path)
-  await replaceInFiles({
-    dir: dirPathTemplate,
-    search: "user",
-    replacement: name,
-  });
+    // Replace name in files (content and name/path)
+    await replaceInFiles({
+      dir: dirPathTemplate,
+      search: "user",
+      replacement: name,
+    });
 
-  // Move to directory selected
-  await moveToDir({ dirPathTemplate, dirpath, name });
-
-  // Remove temp directory
-  await Deno.remove(`${dirPathTemp}`, { recursive: true });
+    // Move to directory selected
+    await moveToDirs({ dirPathTemplate, dirpath, name });
+  } finally {
+    // Remove temp directory
+    await Deno.remove(`${dirPathTemp}`, { recursive: true });
+  }
 
   logger.info("added svc-hello template", { name, dirpath, template });
 }
@@ -56,16 +64,16 @@ type moveToDirOptions = {
   dirpath: string;
 };
 
-async function moveToDir(options: moveToDirOptions) {
+async function moveToDirs(options: moveToDirOptions) {
   const { dirPathTemplate, dirpath, name } = options;
 
   // Move api/ files
-  const sourceDirApi = `${dirPathTemplate}/src/api/${name}s/`;
-  const destinyDirApi = `${dirpath}/src/api/${name}s/`;
+  const sourceDirApi = join(dirPathTemplate, "src", "api", `${name}s`);
+  const destinyDirApi = join(dirpath, "src", "api", `${name}s`);
   await Deno.rename(sourceDirApi, destinyDirApi);
 
   // Move module/ files
-  const sourceDirModule = `${dirPathTemplate}/src/modules/${name}s/`;
-  const destinyDirModule = `${dirpath}/src/modules/${name}s/`;
+  const sourceDirModule = join(dirPathTemplate, "src", "modules", `${name}s`);
+  const destinyDirModule = join(dirpath, "src", "modules", `${name}s`);
   await Deno.rename(sourceDirModule, destinyDirModule);
 }

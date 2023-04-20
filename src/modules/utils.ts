@@ -5,6 +5,7 @@ export type replaceByOptions = {
   search: string;
   replacement: string;
 };
+
 export function replaceInText(
   { textToReplace, search, replacement }: replaceByOptions,
 ): string {

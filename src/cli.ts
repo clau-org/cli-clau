@@ -1,7 +1,6 @@
 import { defineCommandLineInterface } from "../deps.ts";
 import commandInit from "./commands/init.ts";
 import commandAdd from "./commands/add.ts";
-
 import {
   deployProd as commandDeployProd,
   deployStage as commandDeployStage,
