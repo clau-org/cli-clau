@@ -1,6 +1,7 @@
 {
   "name": "platform",
   "template": "svc-crud",
+  "dirpath": "tmp/users",
   "props": [
     {
       "name": "key",

@@ -33,7 +33,7 @@ export async function initNewProject(options: initNewProjectOptions) {
   });
 
   // Move to directory selected
-  await Deno.rename(dirPathTemplate, `${dirpath}/${name}`);
+  await Deno.rename(dirPathTemplate, `${dirpath}/${name}s`);
 
   // Remove temp directory
   await Deno.remove(`${dirPathTemp}`, { recursive: true });
