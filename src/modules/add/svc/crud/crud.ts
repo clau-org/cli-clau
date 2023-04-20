@@ -11,9 +11,10 @@ export type addRouterCrudOptions = {
 export default async function (options: addRouterCrudOptions) {
   const {
     config: {
-      template,
       name = "user",
+      template,
       dirpath = Deno.cwd(),
+      props,
     },
     ctx: { logger },
   } = options;
@@ -27,6 +28,12 @@ export default async function (options: addRouterCrudOptions) {
   await Deno.mkdir(dirPathCli, { recursive: true });
   await $`git clone git@github.com:clau-org/mod-core.git ${dirPathCli}`;
 
+  // Get specific files to update
+  const filePathApiCreate = `${dirPathTemplate}/src/api/users/create.ts`;
+
+  // Generate validation code
+  await generateValidations({ path: filePathApiCreate, props });
+
   // Replace name in files (content and name/path)
   await replaceInFiles({
     dir: dirPathTemplate,
@@ -34,31 +41,31 @@ export default async function (options: addRouterCrudOptions) {
     replacement: name,
   });
 
-  // Get specific files to update
-  const filePathApiCreate = `${dirPathTemplate}/src/api/${name}/create.ts`;
+  // Move to directory selected
+  await moveToDir({ dirPathTemplate, dirpath, name });
 
-  // Generate validation code
-  await generateValidations(filePathApiCreate);
-
-  //Move to directory selected
-  await moveToDir({ dirPathTemp, dirPathTemplate, dirpath });
+  // Remove temp directory
+  await Deno.remove(`${dirPathTemp}`, { recursive: true });
 
   logger.info("added svc-hello template", { name, dirpath, template });
 }
 
 type moveToDirOptions = {
   dirPathTemplate: string;
+  name: string;
   dirpath: string;
-  dirPathTemp: string;
 };
 
 async function moveToDir(options: moveToDirOptions) {
-  const { dirPathTemp, dirpath } = options;
+  const { dirPathTemplate, dirpath, name } = options;
 
   // Move api/ files
+  const sourceDirApi = `${dirPathTemplate}/src/api/${name}s/`;
+  const destinyDirApi = `${dirpath}/src/api/${name}s/`;
+  await Deno.rename(sourceDirApi, destinyDirApi);
 
   // Move module/ files
-
-  // Remove temp directory
-  await Deno.remove(`${dirPathTemp}`, { recursive: true });
+  const sourceDirModule = `${dirPathTemplate}/src/modules/${name}s/`;
+  const destinyDirModule = `${dirpath}/src/modules/${name}s/`;
+  await Deno.rename(sourceDirModule, destinyDirModule);
 }

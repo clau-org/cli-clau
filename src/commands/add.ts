@@ -12,11 +12,14 @@ export const flagName = defineFlag({
 export const flags = [flagName];
 
 export const action: Action = async (ctx: CliContext) => {
-  const { program: { config } } = ctx;
+  const { program: { config: pathFileConfig } } = ctx;
 
-  validateConfig(config);
+  // validateConfig(config);
 
-  await addByConfig(config);
+  // Read config file
+  const config = JSON.parse(await Deno.readTextFile(pathFileConfig));
+
+  await addByConfig({ config, ctx });
 };
 
 export default defineCommand({ key, description, flags, action });

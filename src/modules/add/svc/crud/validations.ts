@@ -47,14 +47,31 @@ const mapPropToValidationCode = new Map(
 );
 
 export function replaceValidationCode({
-  validationCode,
-  routerCode,
+  props,
+  apiCreateContent,
 }: {
-  validationCode: string;
-  routerCode: string;
+  props: any;
+  apiCreateContent: string;
 }) {
+  const validationCode = getValidationCode({ props });
   const searchString = "email: z.string().email(),";
-  return routerCode.replace(searchString, validationCode);
+  return apiCreateContent.replace(searchString, validationCode);
 }
 
-export function generateValidations(path: string) {}
+type generateValidationsOptions = {
+  path: string;
+  props: any;
+};
+
+export async function generateValidations(options: generateValidationsOptions) {
+  const { path, props } = options;
+
+  // Read file from path
+  const apiCreateContent = await Deno.readTextFile(path);
+
+  // Generate validations
+  const validationCode = replaceValidationCode({ apiCreateContent, props });
+
+  // Write file to path
+  await Deno.writeFile(path, new TextEncoder().encode(validationCode));
+}
