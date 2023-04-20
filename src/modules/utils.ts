@@ -1,19 +1,12 @@
 import { walk } from "https://deno.land/std@0.184.0/fs/mod.ts";
 
-export type ReplaceByInDirParams = {
-  dir: string;
-  search: string;
-  replacement: string;
-};
-
-export type ReplaceByParams = {
+export type replaceByOptions = {
   textToReplace: string;
   search: string;
   replacement: string;
 };
-
-export function replaceBy(
-  { textToReplace, search, replacement }: ReplaceByParams,
+export function replaceInText(
+  { textToReplace, search, replacement }: replaceByOptions,
 ): string {
   const searchRegex = new RegExp(`${search}`, "gi");
   return textToReplace.replace(searchRegex, (matched: string) => {
@@ -23,16 +16,21 @@ export function replaceBy(
   });
 }
 
-export async function replaceByInDir({
+export type replaceInFilesContentOptions = {
+  dir: string;
+  search: string;
+  replacement: string;
+};
+export async function replaceInFilesContent({
   dir,
   search,
   replacement,
-}: ReplaceByInDirParams): Promise<void> {
+}: replaceInFilesContentOptions): Promise<void> {
   for await (const entry of walk(dir, { includeDirs: true })) {
     if (entry.isFile) {
       try {
         const fileContent = await Deno.readTextFile(entry.path);
-        const replacedContent = replaceBy({
+        const replacedContent = replaceInText({
           textToReplace: fileContent,
           search,
           replacement,
@@ -44,17 +42,17 @@ export async function replaceByInDir({
     }
   }
 }
-export type ReplaceNamesInDirParams = {
+
+export type replaceInFilesNamesOptions = {
   dir: string;
   search: string;
   replacement: string;
 };
-
-export async function replaceNamesInDir({
+export async function replaceInFilesNames({
   dir,
   search,
   replacement,
-}: ReplaceNamesInDirParams): Promise<void> {
+}: replaceInFilesNamesOptions): Promise<void> {
   const entries = [];
 
   // First, collect all the entries to avoid renaming conflicts while traversing.
@@ -78,4 +76,14 @@ export async function replaceNamesInDir({
       } catch (_e) {}
     }
   }
+}
+
+export type replaceInFilesOptions = {
+  dir: string;
+  search: string;
+  replacement: string;
+};
+export async function replaceInFiles(options: replaceInFilesOptions) {
+  await replaceInFilesContent(options);
+  await replaceInFilesNames(options);
 }

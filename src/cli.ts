@@ -7,6 +7,7 @@ import {
   deployStage as commandDeployStage,
 } from "./commands/project/deploy.ts";
 import commandProjectDev from "./commands/project/dev.ts";
+import commandProjectPreview from "./commands/project/preview.ts";
 import {
   envProd as commandEnvProd,
   envStage as commandEnvStage,
@@ -20,6 +21,7 @@ const commandsProject = [
   commandEnvStage,
   commandEnvProd,
   commandProjectDev,
+  commandProjectPreview,
   commandTest,
   commandTestDev,
   commandDeployStage,

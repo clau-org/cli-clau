@@ -1,8 +1,8 @@
 import { $, CliContext, defineCommand } from "../../../deps.ts";
 export default defineCommand({
-  key: "dev",
-  description: "Maps to 'deno task dev'",
+  key: "preview",
+  description: "Maps to 'deno task preview'",
   action: async (_ctx: CliContext) => {
-    await $`deno task dev`;
+    await $`deno task preview`;
   },
 });

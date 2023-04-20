@@ -1,9 +1,8 @@
 import { Action, CliContext, defineCommand, defineFlag } from "../../deps.ts";
-import { addCodeToProject, validateConfig } from "../modules/add.ts";
+import { addByConfig, validateConfig } from "..//modules/add/add.ts";
 
 export const key = "add";
 export const description = "Command for adding code to an existing project";
-
 export const flagName = defineFlag({
   key: "-c --config",
   required: true,
@@ -17,7 +16,7 @@ export const action: Action = async (ctx: CliContext) => {
 
   validateConfig(config);
 
-  await addCodeToProject({ ctx, config });
+  await addByConfig(config);
 };
 
 export default defineCommand({ key, description, flags, action });

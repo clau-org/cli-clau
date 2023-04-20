@@ -1,5 +1,4 @@
 import { $, CliContext, defineCommand } from "../../../deps.ts";
-
 export const test = defineCommand({
   key: "test",
   description: "Maps to 'deno task test'",

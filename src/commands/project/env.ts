@@ -1,5 +1,4 @@
 import { $, CliContext, defineCommand } from "../../../deps.ts";
-
 export const envStage = defineCommand({
   key: "env:stage",
   description: "Maps to 'deno task env:stage'",

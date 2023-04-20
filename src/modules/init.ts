@@ -1,5 +1,5 @@
 import { $, CliContext } from "../../deps.ts";
-import { replaceByInDir, replaceNamesInDir } from "./utils.ts";
+import { replaceInFiles } from "./utils.ts";
 
 export type initNewProjectOptions = {
   name: string;
@@ -17,26 +17,26 @@ export async function initNewProject(options: initNewProjectOptions) {
   } = options;
 
   // Get working dirs
-  const tempDirPath = await Deno.makeTempDir();
-  const cliDir = `${tempDirPath}/.cli-clau`;
-  const templateDir = `${cliDir}/.playground/${template}`;
-  await Deno.mkdir(cliDir, { recursive: true });
+  const dirPathTemp = await Deno.makeTempDir();
+  const dirPathCli = `${dirPathTemp}/.cli-clau`;
+  const dirPathTemplate = `${dirPathCli}/.playground/${template}`;
 
-  // Clone repository template
-  await $`git clone git@github.com:clau-org/mod-core.git ${cliDir}`;
+  // Download template
+  await Deno.mkdir(dirPathCli, { recursive: true });
+  await $`git clone git@github.com:clau-org/mod-core.git ${dirPathCli}`;
 
-  // Replace name
-  const search = "user";
-  const replacement = name;
-  const dir = templateDir;
-  await replaceByInDir({ dir, search, replacement });
-  await replaceNamesInDir({ dir, search, replacement });
+  // Replace name in files (content and name/path)
+  await replaceInFiles({
+    dir: dirPathTemplate,
+    search: "user",
+    replacement: name,
+  });
 
-  // Move to dirpath
-  await Deno.rename(templateDir, `${dirpath}`);
+  // Move to directory selected
+  await Deno.rename(dirPathTemplate, `${dirpath}`);
 
-  // Remove tempDirPath
-  await Deno.remove(`${tempDirPath}`, { recursive: true });
+  // Remove temp directory
+  await Deno.remove(`${dirPathTemp}`, { recursive: true });
 
   logger.info("init action", { name, dirpath, template });
 }
