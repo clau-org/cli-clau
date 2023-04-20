@@ -74,7 +74,7 @@ export async function replaceInFilesNames({
         return matched.charAt(0) === matched.charAt(0).toUpperCase()
           ? replacement.charAt(0).toUpperCase() + replacement.slice(1)
           : replacement;
-      }
+      },
     );
     const newPath = dir + newRelativeDir;
 

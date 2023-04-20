@@ -32,7 +32,7 @@ export default async function (options: addRouterCrudOptions) {
       "src",
       "api",
       "users",
-      "create.ts"
+      "create.ts",
     );
     await generateValidations({ path: filePathApiCreate, props });
 
