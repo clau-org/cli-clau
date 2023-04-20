@@ -11,12 +11,7 @@ export type addRouterCrudOptions = {
 
 export default async function (options: addRouterCrudOptions) {
   const {
-    config: {
-      name = "user",
-      template,
-      dirpath = Deno.cwd(),
-      props,
-    },
+    config: { name = "user", template, dirpath = Deno.cwd(), props },
     ctx: { logger },
   } = options;
 
@@ -37,7 +32,7 @@ export default async function (options: addRouterCrudOptions) {
       "src",
       "api",
       "users",
-      "create.ts",
+      "create.ts"
     );
     await generateValidations({ path: filePathApiCreate, props });
 

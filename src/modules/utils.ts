@@ -6,9 +6,11 @@ export type replaceByOptions = {
   replacement: string;
 };
 
-export function replaceInText(
-  { textToReplace, search, replacement }: replaceByOptions,
-): string {
+export function replaceInText({
+  textToReplace,
+  search,
+  replacement,
+}: replaceByOptions): string {
   const searchRegex = new RegExp(`${search}`, "gi");
   return textToReplace.replace(searchRegex, (matched: string) => {
     return matched.charAt(0) === matched.charAt(0).toUpperCase()
@@ -65,11 +67,16 @@ export async function replaceInFilesNames({
   for (const entry of entries) {
     const searchRegex = new RegExp(`${search}`, "gi");
 
-    const newPath = entry.path.replace(searchRegex, (matched: string) => {
-      return matched.charAt(0) === matched.charAt(0).toUpperCase()
-        ? replacement.charAt(0).toUpperCase() + replacement.slice(1)
-        : replacement;
-    });
+    const relativeDir = entry.path.replace(dir, "");
+    const newRelativeDir = relativeDir.replace(
+      searchRegex,
+      (matched: string) => {
+        return matched.charAt(0) === matched.charAt(0).toUpperCase()
+          ? replacement.charAt(0).toUpperCase() + replacement.slice(1)
+          : replacement;
+      }
+    );
+    const newPath = dir + newRelativeDir;
 
     if (entry.path !== newPath) {
       try {
